@@ -1,0 +1,79 @@
+name: Build and Deploy
+
+on:
+  workflow_run:
+    workflows: ["Release"]
+    types:
+      - completed
+
+jobs:
+
+  deploy-info:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ fromJSON(steps.release_info.outputs.result).tag_name }}
+      commit_sha: ${{ fromJSON(steps.release_info.outputs.result).commit_sha }}
+      released: ${{ fromJSON(steps.release_info.outputs.result).released }}
+    steps:
+      - name: Get release info
+        id: release_info
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: release } = await github.rest.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const { data: tag } = await github.rest.git.getRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `tags/${release.tag_name}`
+            });
+
+            const wasReleased = tag.object.sha === context.sha;
+
+            return {
+              tag_name: release.tag_name,
+              commit_sha: wasReleased ? tag.object.sha : context.sha,
+              released: wasReleased
+            }
+
+  build-publish-image:
+    needs: deploy-info
+    if: needs.deploy-info.outputs.released == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.deploy-info.outputs.commit_sha }}
+      - name: Build and Publish Image
+        run: |
+          docker build -t my-image:${{ needs.deploy-info.outputs.tag_name }} .
+          # docker push my-image:${{ needs.deploy-info.outputs.tag_name }}
+
+  deploy-qual:
+    needs: [deploy-info, build-publish-image]
+    if: ${{ always() && (needs.deploy-info.outputs.released == 'false' || needs.build-publish-image.result == 'success') }}
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: cert
+      tag_name: ${{ needs.deploy-info.outputs.tag_name }}
+      commit_sha: ${{ needs.deploy-info.outputs.commit_sha }}
+
+  deploy-cert:
+    needs: [deploy-info, deploy-qual]
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: cert
+      tag_name: ${{ needs.deploy-info.outputs.tag_name }}
+      commit_sha: ${{ needs.deploy-info.outputs.commit_sha }}
+
+  deploy-prod:
+    needs: [deploy-info, deploy-cert]
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: cert
+      tag_name: ${{ needs.deploy-info.outputs.tag_name }}
+      commit_sha: ${{ needs.deploy-info.outputs.commit_sha }}

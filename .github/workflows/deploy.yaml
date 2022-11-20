@@ -1,94 +1,33 @@
 name: Deploy
 
 on:
-  workflow_run:
-    workflows: ["Release"]
-    types:
-      - completed
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'The environment to deploy to'
+        required: true
+        type: environment
+        default: 'qual'
+      tag_name:
+        description: 'The tag name to deploy'
+        required: true
+        type: string
+        default: 'latest'
+      commit_sha:
+        description: 'The commit sha to deploy'
+        required: true
+        type: string
+        default: ${{ github.sha }}
 
 jobs:
-
-  deploy-info:
+  deploy:
     runs-on: ubuntu-latest
-    outputs:
-      tag_name: ${{ fromJSON(steps.release_info.outputs.result).tag_name }}
-      commit_sha: ${{ fromJSON(steps.release_info.outputs.result).commit_sha }}
-      released: ${{ fromJSON(steps.release_info.outputs.result).released }}
-    steps:
-      - name: Get release info
-        id: release_info
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { data: release } = await github.rest.repos.getLatestRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            });
-
-            const { data: tag } = await github.rest.git.getRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `tags/${release.tag_name}`
-            });
-
-            const wasReleased = tag.object.sha === context.sha;
-
-            return {
-              tag_name: release.tag_name,
-              commit_sha: wasReleased ? tag.object.sha : context.sha,
-              released: wasReleased
-            }
-
-  build-publish-image:
-    needs: deploy-info
-    if: needs.deploy-info.outputs.released == 'true'
-    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ needs.deploy-info.outputs.commit_sha }}
-      - name: Build and Publish Image
+          ref: ${{ inputs.commit_sha }}
+      - name: Deploy to ${{ inputs.environment }}
         run: |
-          docker build -t my-image:${{ needs.deploy-info.outputs.tag_name }} .
-          # docker push my-image:${{ needs.deploy-info.outputs.tag_name }}
-
-  deploy-qual:
-    needs: [deploy-info, build-publish-image]
-    if: ${{ always() && (needs.deploy-info.outputs.released == 'false' || needs.build-publish-image.result == 'success') }}
-    runs-on: ubuntu-latest
-    environment: qual
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ needs.deploy-info.outputs.commit_sha }}
-      - name: Deploy to Qual
-        run: |
-          # Deploy to Qual
-
-  deploy-cert:
-    needs: [deploy-info, deploy-qual]
-    runs-on: ubuntu-latest
-    environment: cert
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ needs.deploy-info.outputs.commit_sha }}
-      - name: Deploy to Cert
-        run: |
-          # Deploy to Cert
-
-  deploy-prod:
-    needs: [deploy-info, deploy-cert]
-    runs-on: ubuntu-latest
-    environment: prod
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ needs.deploy-info.outputs.commit_sha }}
-      - name: Deploy to Prod
-        run: |
-          # Deploy to Prod
+          # Deploy to ${{ inputs.environment }}
