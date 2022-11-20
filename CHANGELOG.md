@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/loganb1max/gha-sandbox/compare/v1.3.1...v1.4.0) (2022-11-20)
+
+
+### Features
+
+* modularize workflows ([a75367f](https://github.com/loganb1max/gha-sandbox/commit/a75367fee8f3b3f524feb91be9ed6323727b6107))
+
 ## [1.3.1](https://github.com/loganb1max/gha-sandbox/compare/v1.3.0...v1.3.1) (2022-11-20)
 
 
