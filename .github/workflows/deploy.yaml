@@ -27,7 +27,7 @@ jobs:
             });
 
             const wasPublished = tag.object.sha === release.target_commitish;
-            const wasReleased = github.sha tag.object.sha;
+            const wasReleased = context.sha tag.object.sha;
 
             console.log(`Release: ${release.tag_name}`);
             console.log(`Commit: ${tag.object.sha}`);
