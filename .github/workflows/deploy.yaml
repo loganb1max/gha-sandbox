@@ -28,11 +28,6 @@ jobs:
 
             const wasReleased = tag.object.sha === context.sha;
 
-            console.log(`curent sha: ${release.target_commitish}`);
-
-            console.log(`Release: ${release.tag_name}`);
-            console.log(`Commit: ${tag.object.sha}`);
-
             return {
               tag_name: release.tag_name,
               commit_sha: wasReleased ? tag.object.sha : context.sha,
@@ -40,4 +35,6 @@ jobs:
             }
       - name: Print release info
         run: |
-          echo "Release tag: ${{ toJSON(steps.release_info.outputs) }}"
+          echo "Release tag: ${{ fromJSON(steps.release_info.outputs).tag_name }}"
+          echo "Commit SHA: ${{ fromJSON(steps.release_info.outputs).commit_sha }}"
+          echo "Released: ${{ fromJSON(steps.release_info.outputs).released }}"
