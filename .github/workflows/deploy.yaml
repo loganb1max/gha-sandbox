@@ -39,6 +39,16 @@ jobs:
               released: wasReleased
             }
 
+  log-release:
+    needs: deploy-info
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log release info
+        run: |
+          echo "Tag Name: ${{ needs.deploy-info.outputs.tag_name }}"
+          echo "Commit SHA: ${{ needs.deploy-info.outputs.commit_sha }}"
+          echo "Released: ${{ needs.deploy-info.outputs.released == 'true' }}"
+
   build-publish-image:
     needs: deploy-info
     if: needs.deploy-info.outputs.released == 'true'
