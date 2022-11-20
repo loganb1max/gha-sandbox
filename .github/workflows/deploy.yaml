@@ -7,8 +7,13 @@ on:
       - completed
 
 jobs:
+
   deploy-info:
     runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ fromJSON(steps.release_info.outputs.result).tag_name }}
+      commit_sha: ${{ fromJSON(steps.release_info.outputs.result).commit_sha }}
+      released: ${{ fromJSON(steps.release_info.outputs.result).released }}
     steps:
       - name: Get release info
         id: release_info
@@ -33,8 +38,54 @@ jobs:
               commit_sha: wasReleased ? tag.object.sha : context.sha,
               released: wasReleased
             }
-      - name: Print release info
+
+  build-publish-image:
+    needs: deploy-info
+    if: needs.deploy-info.outputs.released == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.deploy-info.outputs.commit_sha }}
+      - name: Build and Publish Image
         run: |
-          echo "Release tag: ${{ fromJSON(steps.release_info.outputs.result).tag_name }}"
-          echo "Commit SHA: ${{ fromJSON(steps.release_info.outputs.result).commit_sha }}"
-          echo "Released: ${{ fromJSON(steps.release_info.outputs.result).released }}"
+          docker build -t my-image:${{ needs.deploy-info.outputs.tag_name }} .
+          # docker push my-image:${{ needs.deploy-info.outputs.tag_name }}
+
+  deploy-qual:
+    needs: [deploy-info, build-publish-image]
+    if: needs.deploy-info.outputs.released == 'false' || needs.build-publish-image.outcome == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.deploy-info.outputs.commit_sha }}
+      - name: Deploy to Qual
+        run: |
+          # Deploy to Qual
+
+  deploy-cert:
+    needs: [deploy-qual]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.deploy-info.outputs.commit_sha }}
+      - name: Deploy to Cert
+        run: |
+          # Deploy to Cert
+
+  deploy-prod:
+    needs: [deploy-cert]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.deploy-info.outputs.commit_sha }}
+      - name: Deploy to Prod
+        run: |
+          # Deploy to Prod
