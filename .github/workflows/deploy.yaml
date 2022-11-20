@@ -26,8 +26,13 @@ jobs:
               ref: `tags/${release.tag_name}`
             });
 
+            const wasPublished = tag.object.sha === release.target_commitish;
+            const wasReleased = github.sha tag.object.sha;
+
             console.log(`Release: ${release.tag_name}`);
             console.log(`Commit: ${tag.object.sha}`);
+            console.log(`Published: ${wasPublished}`);
+            console.log(`Released: ${wasReleased}`);
 
             return {
               tag_name: release.tag_name,
@@ -35,4 +40,4 @@ jobs:
             }
       - name: Print release info
         run: |
-          echo "Release tag: ${{ steps.release_info.outputs }}"
+          echo "Release tag: ${{ toJSON(steps.release_info.outputs) }}"
