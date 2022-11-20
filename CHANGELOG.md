@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/loganb1max/gha-sandbox/compare/v1.5.0...v1.5.1) (2022-11-20)
+
+
+### Bug Fixes
+
+* change to deploy to prod ([9081d03](https://github.com/loganb1max/gha-sandbox/commit/9081d03a0da7980ae1b02222f6b646c46a0a6373))
+
 # [1.5.0](https://github.com/loganb1max/gha-sandbox/compare/v1.4.0...v1.5.0) (2022-11-20)
 
 
