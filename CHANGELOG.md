@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/loganb1max/gha-sandbox/compare/v1.6.0...v1.6.1) (2022-11-20)
+
+
+### Bug Fixes
+
+* ensure we are configured to deploy to correct env ([168057b](https://github.com/loganb1max/gha-sandbox/commit/168057bb80fad8153f905095ac8332a625c2fdf9))
+
 # [1.6.0](https://github.com/loganb1max/gha-sandbox/compare/v1.5.1...v1.6.0) (2022-11-20)
 
 
