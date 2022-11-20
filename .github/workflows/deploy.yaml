@@ -25,5 +25,5 @@ jobs:
             }
       - name: Print release info
         run: |
-          echo "Release tag: ${{ steps.release_info.outputs.tag_name }}"
-          echo "Release URL: ${{ steps.release_info.outputs.html_url }}"
+          echo "Release tag: ${{ steps.release_info.outputs.result.tag_name }}"
+          echo "Release URL: ${{ steps.release_info.outputs.result.html_url }}"
