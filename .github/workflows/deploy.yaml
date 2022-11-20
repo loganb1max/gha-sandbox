@@ -1,0 +1,30 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Release"]
+    types:
+      - completed
+
+jobs:
+  deploy-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get release info
+        id: release_info
+        uses: actions/github-script@v6
+        with:
+          script: |
+            # Get the latest release
+            const release = await github.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            return {
+              tag_name: release.data.tag_name,
+              html_url: release.data.html_url
+            }
+      - name: Print release info
+        run: |
+          echo "Release tag: ${{ steps.release_info.outputs.tag_name }}"
+          echo "Release URL: ${{ steps.release_info.outputs.html_url }}"
