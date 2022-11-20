@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/loganb1max/gha-sandbox/compare/v1.5.1...v1.6.0) (2022-11-20)
+
+
+### Features
+
+* try out deployment prompts ([8ca08f2](https://github.com/loganb1max/gha-sandbox/commit/8ca08f2e3d97dd1bf331edfc24f9affeb2855e78))
+
 ## [1.5.1](https://github.com/loganb1max/gha-sandbox/compare/v1.5.0...v1.5.1) (2022-11-20)
 
 
