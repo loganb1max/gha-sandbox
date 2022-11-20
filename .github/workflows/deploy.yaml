@@ -20,14 +20,19 @@ jobs:
               repo: context.repo.repo
             });
 
-            console.log(release);
-            console.log(`Release version: ${release.tag_name}`);
-            console.log(`Release URL: ${release.html_url}`);
+            const { data: tag } = await github.rest.git.getRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `tags/${release.tag_name}`
+            });
+
+            console.log(`Release: ${release.tag_name}`);
+            console.log(`Commit: ${tag.object.sha}`);
 
             return {
-              tag_name: release.tag_name
+              tag_name: release.tag_name,
+              commit_sha: tag.object.sha
             }
       - name: Print release info
         run: |
-          echo "Release tag: ${{ steps.release_info.outputs.result.tag_name }}"
-          echo "Release URL: ${{ steps.release_info.outputs.result.html_url }}"
+          echo "Release tag: ${{ steps.release_info.outputs }}"
