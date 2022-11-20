@@ -26,12 +26,10 @@ jobs:
               ref: `tags/${release.tag_name}`
             });
 
-            const wasPublished = tag.object.sha === release.target_commitish;
             const wasReleased = context.sha tag.object.sha;
 
             console.log(`Release: ${release.tag_name}`);
             console.log(`Commit: ${tag.object.sha}`);
-            console.log(`Published: ${wasPublished}`);
             console.log(`Released: ${wasReleased}`);
 
             return {
