@@ -55,7 +55,7 @@ jobs:
 
   deploy-qual:
     needs: [deploy-info, build-publish-image]
-    if: ${{ always() && needs.deploy-info.outputs.released == 'false' || needs.deploy-info.outcome == 'success' }}
+    if: ${{ always() && (needs.deploy-info.outputs.released == 'false' || needs.deploy-info.outcome == 'success') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -67,7 +67,7 @@ jobs:
           # Deploy to Qual
 
   deploy-cert:
-    needs: [deploy-qual]
+    needs: [deploy-info, deploy-qual]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -79,7 +79,7 @@ jobs:
           # Deploy to Cert
 
   deploy-prod:
-    needs: [deploy-cert]
+    needs: [deploy-info, deploy-cert]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
