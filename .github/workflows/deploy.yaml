@@ -1,6 +1,20 @@
 name: Deploy
 
 on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'The environment to deploy to'
+        required: true
+        type: string
+      tag_name:
+        description: 'The tag name to deploy'
+        required: true
+        type: string
+      commit_sha:
+        description: 'The commit sha to deploy'
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       environment:
@@ -17,7 +31,6 @@ on:
         description: 'The commit sha to deploy'
         required: true
         type: string
-        default: ${{ github.sha }}
 
 jobs:
   deploy:
