@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/loganb1max/gha-sandbox/compare/v1.1.0...v1.2.0) (2022-11-20)
+
+
+### Features
+
+* clean up deploy workflow some more ([8ca7027](https://github.com/loganb1max/gha-sandbox/commit/8ca70271d54b225302d423299494afc0830dccf7))
+
 # [1.1.0](https://github.com/loganb1max/gha-sandbox/compare/v1.0.0...v1.1.0) (2022-11-20)
 
 
