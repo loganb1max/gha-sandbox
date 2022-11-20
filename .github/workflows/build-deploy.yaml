@@ -58,7 +58,7 @@ jobs:
     if: ${{ always() && (needs.deploy-info.outputs.released == 'false' || needs.build-publish-image.result == 'success') }}
     uses: ./.github/workflows/deploy.yaml
     with:
-      environment: cert
+      environment: qual
       tag_name: ${{ needs.deploy-info.outputs.tag_name }}
       commit_sha: ${{ needs.deploy-info.outputs.commit_sha }}
 
