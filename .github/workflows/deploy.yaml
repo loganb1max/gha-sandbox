@@ -53,17 +53,9 @@ jobs:
           docker build -t my-image:${{ needs.deploy-info.outputs.tag_name }} .
           # docker push my-image:${{ needs.deploy-info.outputs.tag_name }}
 
-  log:
-    needs: [deploy-info, build-publish-image]
-    if: ${{ always() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Log
-        run: echo "Should Deploy ${{ needs.deploy-info.outputs.released == 'false' || needs.deploy-info.outcome == 'success' }}"
-
   deploy-qual:
     needs: [deploy-info, build-publish-image]
-    if: ${{ needs.deploy-info.outputs.released == 'false' || needs.deploy-info.outcome == 'success' }}
+    if: ${{ always() && needs.deploy-info.outputs.released == 'false' || needs.deploy-info.outcome == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
