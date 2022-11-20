@@ -1,0 +1,27 @@
+{
+  "name": "gha-sandbox",
+  "version": "0.0.0-development",
+  "description": "A sandbox project for experimenting with gha workflows",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loganb1max/gha-sandbox.git"
+  },
+  "author": "loganb1max",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/loganb1max/gha-sandbox/issues"
+  },
+  "homepage": "https://github.com/loganb1max/gha-sandbox#readme",
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
+  },
+  "devDependencies": {
+    "semantic-release": "^19.0.5"
+  }
+}
