@@ -35,6 +35,6 @@ jobs:
             }
       - name: Print release info
         run: |
-          echo "Release tag: ${{ fromJSON(steps.release_info.outputs).tag_name }}"
-          echo "Commit SHA: ${{ fromJSON(steps.release_info.outputs).commit_sha }}"
-          echo "Released: ${{ fromJSON(steps.release_info.outputs).released }}"
+          echo "Release tag: ${{ fromJSON(steps.release_info.outputs.result).tag_name }}"
+          echo "Commit SHA: ${{ fromJSON(steps.release_info.outputs.result).commit_sha }}"
+          echo "Released: ${{ fromJSON(steps.release_info.outputs.result).released }}"
