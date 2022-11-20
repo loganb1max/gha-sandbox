@@ -15,13 +15,17 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const release = await github.rest.repos.getLatestRelease({
+            const { data: release } = await github.rest.repos.getLatestRelease({
               owner: context.repo.owner,
               repo: context.repo.repo
             });
+
+            console.log(release);
+            console.log(`Release version: ${release.tag_name}`);
+            console.log(`Release URL: ${release.html_url}`);
+
             return {
-              tag_name: release.data.tag_name,
-              html_url: release.data.html_url
+              tag_name: release.tag_name
             }
       - name: Print release info
         run: |
